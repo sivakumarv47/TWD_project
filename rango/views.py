@@ -143,7 +143,6 @@ def add_page(request, category_name_slug):
         else:
             print form.errors
     else:
-        # print "*************", cat
         form = PageForm()
 
     context_dict = {'form':form, 'category': cat, 'category_name_slug':category_name_slug}
