@@ -10,7 +10,7 @@ import registration
 # Create a new class that redirects the user to the index page, if successful at logging
 class MyRegistrationView(RegistrationView):
     def get_success_url(selfself,request, user):
-        return '/rango/'
+        return '/rango/add_profile'
 
 
 urlpatterns = patterns('',

@@ -3,6 +3,7 @@ from django.shortcuts import render
 #
 from rango.models import Category
 from rango.models import Page
+from rango.models import UserProfile
 
 from rango.forms import CategoryForm
 from rango.forms import PageForm
@@ -16,6 +17,59 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from datetime import datetime
 from rango.bing_search import run_query
+from django.contrib.auth.models import User
+
+
+@login_required
+def profile(request):
+
+    u = User.objects.get(username=request.user)
+    print u
+    userprofile = UserProfile.objects.get(user=u)
+    print userprofile
+
+    return render(request,
+            'rango/profile.html',
+            { 'userprofile': userprofile, 'user':u} )
+
+
+
+def register_profile(request):
+
+
+    if request.method == 'POST':
+        profile_form = UserProfileForm(data=request.POST)
+
+        if  profile_form.is_valid():
+            profile = profile_form.save(commit=False)
+            # profile.user = user
+
+            # Did the user provide a profile picture?
+            # If so, we need to get it from the input form and put it in the UserProfile model.
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+
+            # Now we save the UserProfile model instance.
+            profile.save()
+
+            # Update our variable to tell the template registration was successful.
+            registered = True
+
+        # Invalid form or forms - mistakes or something else?
+        # Print problems to the terminal.
+        # They'll also be shown to the user.
+        else:
+            print  profile_form.errors
+
+    # Not a HTTP POST, so we render our form using two ModelForm instances.
+    # These forms will be blank, ready for user input.
+    else:
+        profile_form = UserProfileForm()
+
+    # Render the template depending on the context.
+    return render(request,
+            'rango/profile_registration.html',
+            { 'profile_form': profile_form} )
 
 
 def track_url(request):
